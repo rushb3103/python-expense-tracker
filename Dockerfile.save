@@ -1,0 +1,50 @@
+# Use the official Python image
+FROM python:3.9-slim
+ngrok config add-authtoken 2LeC9QFamm1oNTjOJr54JQkZALB_3xVh9RAgACk6yNMjJFuyAngrok config add-authtoken 2LeC9QFamm1oNTjOJr54JQkZALB_3xVh9RAgACk6yNMjJFuyA
+# Set the working directory
+WORKDIR /app
+
+# Copy requirements file
+COPY requirements.txt .
+
+# Install virtualenv
+RUN pip install --no-cache-dir virtualenv
+
+# Create a virtual environment
+RUN virtualenv venv
+
+# Activate the virtual environment and install dependencies
+RUN . venv/bin/activate && pip install --no-cache-dir -r requirements.txt
+
+# Copy the application code
+COPY . .
+
+# Download and install Ngrok
+RUN wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip && \
+    unzip ngrok-stable-linux-amd64.zip && \
+    mv ngrok /usr/local/bin && \
+    rm ngrok-stable-linux-amd64.zip
+
+# Expose the port the app runs on
+EXPOSE 8000 4040
+
+# Set the entry point to run Gunicorn with the app
+CMD ["/bin/bash", "-c", ". venv/bin/activate && exec gunicorn -b 0.0.0.0:8000 wsgi:app"]
+# Use the official Python image from the Docker Hub
+FROM python:3.9-slim
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the requirements file and install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the application code
+COPY . .
+
+# Expose the port your app runs on
+EXPOSE 8000 4040
+
+# Command to run the Gunicorn server
+CMD gunicorn myapp:app --bind 0.0.0.0:8000 & ngrok http --url=harmless-singular-mako.ngrok-free.app 8000
