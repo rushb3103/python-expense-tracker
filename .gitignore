@@ -2,3 +2,5 @@
 __*
 docker-compose.yml
 *.yml
+/env/*
+/env
