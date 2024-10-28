@@ -4,3 +4,4 @@ docker-compose.yml
 *.yml
 /env/*
 /env
+/venv
