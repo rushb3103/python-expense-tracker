@@ -14,7 +14,6 @@ class main_users(db):
             "email"
         ]
         self.table = "main_users"
-        print(self.cursor)
 
 
         # def insert(self, values):

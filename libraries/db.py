@@ -27,7 +27,7 @@ class db():
         self.join = ""
         self.connection = db_connection
         self.cursor = cursor
-        print("connected to localhost")
+        # print("connected to localhost")
 
     # def create_connection(self):
 
@@ -63,3 +63,6 @@ class db():
         query = f"""
             select {self.fields} from {self.table} {self.join} where {self.where}
         """
+        self.cursor.execute(query)
+        result = self.cursor.fetchall()
+        return result
