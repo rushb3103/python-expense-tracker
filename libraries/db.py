@@ -1,7 +1,10 @@
 import mysql.connector as connection 
 
-class db():
-    connection = (
+
+def create_connection():
+
+    global db_connection 
+    db_connection = (
     connection.connect(
             host="localhost", 
             port="3309", 
@@ -10,24 +13,23 @@ class db():
             database = "expensedb" 
         )
     )
-    cursor = connection.cursor()
+    global cursor 
+    cursor = db_connection.cursor()
     print("connected to localhost")
+
+create_connection()
+class db():
     def __init__(self):
         self.columns = []
         self.table = ""
-
-    def create_connection(self):
-        self.connection = (
-            connection.connect(
-                host="localhost", 
-                port="3309", 
-                user = "root", 
-                password = "root", 
-                database = "expensedb" 
-            )
-        )
-        self.cursor = self.connection.cursor()
+        self.fields = "*"
+        self.where = ""
+        self.join = ""
+        self.connection = db_connection
+        self.cursor = cursor
         print("connected to localhost")
+
+    # def create_connection(self):
 
     def insert(self, table="", columns=[], values=[]):
         print(self.table)
@@ -37,10 +39,8 @@ class db():
         for value in values:
             print(value)
             if value != values[len(values)-1]:
-                print("y")
                 values_str += "%s,"
             else:
-                print("n")
                 values_str += "%s"
 
         query = f"insert into {self.table} {column_str} values (" + values_str + ")"
@@ -51,5 +51,15 @@ class db():
             query,
             # tuple(values)
         )
-
+        self.connection.commit()
         print(self.cursor.rowcount, "row inesrted")
+        return self.cursor.rowcount
+
+    def insert_dict(self, insert_dict : dict):
+        return self.insert(tuple(insert_dict.keys()), tuple(insert_dict.values()))
+        # pass
+
+    def select(self, execute_dict=False):
+        query = f"""
+            select {self.fields} from {self.table} {self.join} where {self.where}
+        """
