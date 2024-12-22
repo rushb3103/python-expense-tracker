@@ -6,11 +6,11 @@ def create_connection():
     global db_connection 
     db_connection = (
     connection.connect(
-            host="localhost", 
-            port="3309", 
-            user = "root", 
-            password = "root", 
-            database = "expensedb" 
+            host="zyla7.h.filess.io", 
+            port="3307", 
+            user = "mysql_threadfive", 
+            password = "0ff32fa3501a15de97d197c566799fc5695366fd", 
+            database = "mysql_threadfive" 
         )
     )
     global cursor 
