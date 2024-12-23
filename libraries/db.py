@@ -1,16 +1,21 @@
 import mysql.connector as connection 
 
 
+from dotenv import load_dotenv
+load_dotenv('.env')
+
+
 def create_connection():
 
+    import os    
     global db_connection 
     db_connection = (
     connection.connect(
-            host="zyla7.h.filess.io", 
-            port="3307", 
-            user = "mysql_threadfive", 
-            password = "0ff32fa3501a15de97d197c566799fc5695366fd", 
-            database = "mysql_threadfive" 
+            host=str(os.getenv("DATABASE_HOST")), 
+            port=int(os.getenv("DATABASE_PORT")), 
+            user = str(os.getenv("DATABASE_USER")), 
+            password = str(os.getenv("DATABASE_PASSWORD")), 
+            database = str(os.getenv("DATABASE_NAME"))
         )
     )
     global cursor 

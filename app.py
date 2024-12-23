@@ -27,6 +27,6 @@ def hello_world():
 app.register_blueprint(user_blueprint, url_prefix='/user')
 
 if  __name__ ==  '__main__':
-	app.run(debug=True)
+    app.run(debug=True)
 
 
