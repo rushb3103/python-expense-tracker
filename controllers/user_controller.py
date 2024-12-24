@@ -44,8 +44,7 @@ class user_controller():
         is_valid, message = self.functionsObj.validate_email(email)
         validation_results["email"] = message if not is_valid else "Valid"
 
-        for f, result in validation_results.items():
-            print(f, result)
+        for _, result in validation_results.items():
             if result != "Valid":
                 return self.functionsObj.send_response(0, f"{result}")
 
@@ -78,10 +77,27 @@ class user_controller():
         username = request.form.get("username", '', str)
         password = request.form.get("password", '', str)
 
+        validation_result = {}
+
+        is_valid, message = self.functionsObj.validate_username(username)
+        validation_result["username"] = message if not is_valid else "Valid"
+
+        is_valid, message = self.functionsObj.validate_password(password)
+        validation_result["passord"] = message if not is_valid else "Valid"
+
+        for _, message in validation_result.items():
+            if str(message) != "Valid":
+                return self.functionsObj.send_response(0, message)
+
+        password = self.functionsObj.generate_hash(password)
         main_usersObj = main_users()
-        main_usersObj.where = f"username = '{username}' and password = '{password}'"
-        records = main_usersObj.select()
-        if len(records) > 0:
-            return {'status_code':0,'status_message':'Login DOne'}
-        return {'status_code':1,'status_message':'Login Failed'}
-    
+        main_usersObj.fields = "id, password"
+        main_usersObj.where = f"username = '{username}'"
+        user_records = main_usersObj.select()
+        if len(user_records) == 0:
+            return self.functionsObj.send_response(0, "User Not Found.")
+        
+        if str(user_records[0][1]) != password:
+            return self.functionsObj.send_response(0, "Password does not match.")
+
+        return self.functionsObj.send_response(1, "Login Successful.")   
