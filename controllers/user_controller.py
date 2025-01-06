@@ -17,6 +17,7 @@ class user_controller():
         firstname = request.form.get('firstname', '', str)
         lastname = request.form.get('lastname', '', str)
         email = request.form.get("email", '', str)
+        req_ip = request.remote_addr
 
         validation_results = {}
 
@@ -58,6 +59,8 @@ class user_controller():
         result = main_usersObj.select()
         if len(result) > 0:
             return self.functionsObj.send_response(0, "Same mobile Already exists.")
+        
+        current_date = self.functionsObj.get_current_datetime()
 
         insert_dict = {
             "username" : username ,
@@ -67,7 +70,11 @@ class user_controller():
             "gender" : gender,
             "first_name" : firstname,
             "last_name" : lastname,
-            "email" : email
+            "email" : email,
+            "created_date" : current_date,
+            "updated_date" : current_date,
+            "created_ip" : req_ip,
+            "updated_ip" : req_ip
         }
         inserted_record = main_usersObj.insert('',tuple(insert_dict.keys()), tuple(insert_dict.values()))
         if inserted_record > 0:

@@ -40,7 +40,7 @@ class db():
         print(self.table)
         column_str = str(tuple(columns)).replace('\'','')
         values_str = ""
-        print(values[len(values)-1])
+        # print(values[len(values)-1])
         for value in values:
             print(value)
             if value != values[len(values)-1]:
@@ -61,7 +61,7 @@ class db():
         return self.cursor.rowcount
 
     def insert_dict(self, insert_dict : dict):
-        return self.insert(tuple(insert_dict.keys()), tuple(insert_dict.values()))
+        return self.insert(columns=tuple(insert_dict.keys()), values=tuple(insert_dict.values()))
         # pass
 
     def select(self, execute_dict=False):

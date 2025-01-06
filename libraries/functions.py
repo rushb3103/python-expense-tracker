@@ -66,6 +66,25 @@ class functions():
             return False, "Email must be in a valid format."
         return True, ""
     
+    def validate_transaction_type(self, transaction_type:str) -> tuple:
+        if str(transaction_type).lower() not in ["credit", "debit"]:
+            return False, "Transaction Must be Credit/Debit"
+        return True, ""
+    
+    def validate_sub_transaction_type(self, sub_transaction_type:str) -> tuple:
+        if sub_transaction_type == "":
+            return False, "Sub Transaction Must Not be blank."
+        return True, ""
+    
+    def validate_amount(self, amount:float) -> tuple:
+        if amount <= 0:
+            return False, "Amount must be positive"
+        return True, ""
+    
+    def get_current_datetime(self) -> str:
+        return datetime.now().strftime("%Y-%m-%d")
+
+
     def generate_hash(self, string:str) -> str:
         sha256 = hashlib.sha256()
         sha256.update(string.encode('utf-8'))
