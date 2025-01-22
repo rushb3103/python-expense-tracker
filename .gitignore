@@ -1,6 +1,9 @@
 .env/*
 __*
 docker-compose.yml
+*.yaml
+Dockerfile
+Dockerfile/
 *.yml
 /env/*
 /env
