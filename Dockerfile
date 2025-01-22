@@ -14,7 +14,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Install wget for Ngrok installation
-RUN apt-get update && apt -y upgrade
+# RUN apt-get update && apt -y upgrade
 
 # Expose the ports (Gunicorn on 8000, Ngrok's web interface on 4040)
 EXPOSE 8000
