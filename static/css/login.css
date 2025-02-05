@@ -1,0 +1,100 @@
+* {
+    margin: 0 px;
+    padding: 0 px;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+body {
+    background-color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+.login-box {
+    background-color: #1f0730; /* Purple background */
+    color: white;
+    padding: 30px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.login-box h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 30px;
+    color: #f1c40f; /* Yellow text for title */
+}
+
+.input-container {
+    margin-bottom: 30px;
+}
+
+.input-container label {
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 5px;
+}   
+
+.input-container input {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.input-container input:focus {
+    outline-color: #f1c40f; /* Yellow border on focus */
+    border: 1px solid #f1c40f;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #f1c40f; /* Yellow button */
+    color: #1f0730; /* Purple text */
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: #f39c12; /* Darker yellow on hover */
+}
+
+button:focus {
+    outline-color: #1f0730; /* Purple outline on focus */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .login-box {
+        width: 90%;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-box {
+        width: 100%;
+        padding: 15px;
+    }
+    .login-box h2 {
+        font-size: 1.5rem;
+    }
+    .input-container input {
+        font-size: 0.9rem;
+    }
+}

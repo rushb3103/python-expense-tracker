@@ -20,6 +20,7 @@ from flask import Flask
 
 app = Flask(__name__)
 dbObj = db()
+app.static_folder = 'static'
 
 @app.route("/")
 def hello_world():
