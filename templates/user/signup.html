@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
+    <script>
+        function validateSignup(event) {
+            event.preventDefault(); // Prevent form from submitting normally
+            
+            const formData = new FormData(document.getElementById("signupForm"));
+
+            fetch("/user/signup", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status_code == 1) {
+                    alert("Signup successful! Redirecting to login...");
+                    window.location.href = "/"; // Redirect to login
+                } else {
+                    alert("Signup failed: " + data.message);
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</head>
+<body>
+
+    <div class="signup-container">
+
+        <h2>Signup</h2>
+        <form id="signupForm">
+            <div class="input-container">
+                <label for="firstname">First Name:</label>
+                <input type="text" id="firstname" name="firstname" required><br>
+            </div>
+    
+            <div class="input-container">
+                <label for="lastname">Last Name:</label>
+                <input type="text" id="lastname" name="lastname" required><br>
+            </div>
+    
+            <div class="input-container">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required><br>
+            </div>
+            
+            <div class="input-container">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required><br>
+            </div>
+    
+            <div class="input-container">
+                <label for="dob">Date of Birth:</label>
+                <input type="date" id="dob" name="dob" required><br>
+            </div>
+    
+            <div class="input-container">
+                <label for="mobile">Mobile:</label>
+                <input type="text" id="mobile" name="mobile" required><br>
+            </div>
+    
+
+            <div class="input-container">
+                <label for="gender">Gender:</label>
+                <select id="gender" name="gender" required>
+                    <option value="">Select</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select><br>
+            </div>
+
+            <div class="input-container">    
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required><br>
+            </div>
+    
+            <button type="submit">Signup</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("signupForm").addEventListener("submit", validateSignup);
+    </script>
+
+</body>
+</html>

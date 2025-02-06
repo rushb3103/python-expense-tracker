@@ -7,7 +7,7 @@ load_dotenv('.env')
 
 def create_connection():
 
-    import os    
+    import os
     global db_connection 
     db_connection = (
     connection.connect(
