@@ -1,6 +1,14 @@
+from functools import wraps
+import os
 import re
 from datetime import datetime
 import hashlib
+import traceback
+
+from flask import jsonify, request
+import jwt
+from dotenv import load_dotenv
+load_dotenv('.env')
 
 class functions():
     def send_response(self, status_code, message, data = []):
@@ -89,3 +97,34 @@ class functions():
         sha256 = hashlib.sha256()
         sha256.update(string.encode('utf-8'))
         return sha256.hexdigest()
+    
+
+    @staticmethod
+    def token_required(f):
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            token = None
+            # jwt is passed in the request header
+            # if 'x-access-token' in request.headers:
+            #     token = request.headers['x-access-token']
+            if "Authorization" in request.headers:
+                token = request.headers["Authorization"]
+                token = str(token).split(" ")[-1]
+            # return 401 if token is not passed
+            if not token:
+                return jsonify({'message' : 'Token is missing !!'}), 401
+            
+            try:
+                # decoding the payload to fetch the stored details
+                data = jwt.decode(token, os.getenv('SECRET_KEY'), algorithms='HS256')
+                # current_user = User.query\
+                #     .filter_by(public_id = data['public_id'])\
+                #     .first()
+            except:
+                return jsonify({
+                    'message' : 'Token is invalid !!'
+                }), 401
+            # returns the current logged in users context to the routes
+            return  f(data, *args, **kwargs)
+    
+        return decorated

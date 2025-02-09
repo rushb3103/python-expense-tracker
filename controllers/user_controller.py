@@ -1,7 +1,9 @@
+import os
 from flask import json
 from models.main_users import main_users
 from libraries.functions import functions
 import hashlib
+import jwt
 
 class user_controller():
     def __init__(self):
@@ -106,5 +108,11 @@ class user_controller():
         
         if str(user_records[0][1]) != password:
             return self.functionsObj.send_response(0, "Password does not match.")
+        
+        logged_user = {"id":user_records[0][0], "timestamp":self.functionsObj.get_current_datetime()}
+        encoded_jwt = jwt.encode(logged_user, os.getenv('SECRET_KEY'), algorithm="HS256")
 
-        return self.functionsObj.send_response(1, "Login Successful.")   
+        return self.functionsObj.send_response(1, "Login Successful.", {"token": encoded_jwt})
+    
+    def home(self, request):
+        return self.functionsObj.send_response(1, "WELCOME")

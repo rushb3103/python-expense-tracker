@@ -26,7 +26,7 @@
             .then(data => {
                 console.log(data)
                 if (data.status_code == 1) {
-                    window.location.href = "/home"; // Redirect on success
+                    window.location.href = "/"; // Redirect on success
                 } else {
                     // alert("Login failed! Please check your credentials.");
                     alert(data.status_message)
