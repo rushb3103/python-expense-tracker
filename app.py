@@ -15,12 +15,14 @@
 from libraries.db import db
 from route.user import user_blueprint
 from route.transactions import transaction_blueprint
+from flask_cors import CORS
 
 from flask import Flask
 
 app = Flask(__name__)
 dbObj = db()
 app.static_folder = 'static'
+CORS(app)
 
 @app.route("/")
 def hello_world():

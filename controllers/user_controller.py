@@ -114,5 +114,8 @@ class user_controller():
 
         return self.functionsObj.send_response(1, "Login Successful.", {"token": encoded_jwt})
     
-    def home(self, request):
-        return self.functionsObj.send_response(1, "WELCOME")
+    def home(self, request, user_id):
+        main_usersObj = main_users()
+        user_data = main_usersObj.get_user_from_id(user_id)
+        print(user_data)
+        return self.functionsObj.send_response(1, "Done", {"message":user_data[0][0]})

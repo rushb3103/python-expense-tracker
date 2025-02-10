@@ -107,6 +107,7 @@ class functions():
             # jwt is passed in the request header
             # if 'x-access-token' in request.headers:
             #     token = request.headers['x-access-token']
+            print(request.headers)
             if "Authorization" in request.headers:
                 token = request.headers["Authorization"]
                 token = str(token).split(" ")[-1]
@@ -117,6 +118,7 @@ class functions():
             try:
                 # decoding the payload to fetch the stored details
                 data = jwt.decode(token, os.getenv('SECRET_KEY'), algorithms='HS256')
+                return_data = data["id"]
                 # current_user = User.query\
                 #     .filter_by(public_id = data['public_id'])\
                 #     .first()
@@ -125,6 +127,6 @@ class functions():
                     'message' : 'Token is invalid !!'
                 }), 401
             # returns the current logged in users context to the routes
-            return  f(data, *args, **kwargs)
+            return  f(return_data, *args, **kwargs)
     
         return decorated

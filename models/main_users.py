@@ -15,6 +15,11 @@ class main_users(db):
         ]
         self.table = "main_users"
 
+    def get_user_from_id(self, user_id):
+        self.fields = "user_name"
+        self.where = f"id = {user_id}"
+        return self.select()
+
 
         # def insert(self, values):
             

@@ -19,9 +19,9 @@
             .then(data => {
                 if (data.status_code == 1) {
                     alert("Signup successful! Redirecting to login...");
-                    window.location.href = "/"; // Redirect to login
+                    window.location.href = "/user/login"; // Redirect to login
                 } else {
-                    alert("Signup failed: " + data.message);
+                    alert("Signup failed: " + data.status_message);
                     
                 }
             })

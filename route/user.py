@@ -26,18 +26,27 @@ def login():
         # print("P")
         return user_controllerObj.login(request)
     
-@user_blueprint.route("/home", methods=["GET", "POST"])
+@user_blueprint.route("/home", methods=["POST"])
 @functions.token_required
-def home(user=0):
-    print(user)
+def get_home(user_id=0):
+    print(user_id)
     if request.method == 'GET':
-        # print("G")
-        # return render_template('/user/login.html')
-        return "<p>Hello, I am Rushit !!</p>"
+        return render_template('/user/home.html')
+        return user_controllerObj.home(request, user_id)
         # return 'OK'
     elif request.method == 'POST':
         # print("P")
-        return user_controllerObj.home(request)
+        return user_controllerObj.home(request, user_id)
+@user_blueprint.route("/home", methods=["GET"])
+def post_home(user_id=0):
+    print(user_id)
+    if request.method == 'GET':
+        return render_template('/user/home.html')
+        return user_controllerObj.home(request, user_id)
+        # return 'OK'
+    elif request.method == 'POST':
+        # print("P")
+        return user_controllerObj.home(request, user_id)
 
 
 # @user_blueprint.route("/login", methods=["POST"])

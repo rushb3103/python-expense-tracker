@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const token = localStorage.getItem("authToken");
+    
+            if (!token) {
+                window.location.href = "/user/login"; // Redirect if no token
+                return;
+            }
+    
+            fetch("http://127.0.0.1:5000/user/home", {  // Ensure correct API URL
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Token expired or invalid.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById("welcomeMessage").innerText = data.data.message;
+            })
+            .catch(error => {
+                alert("Session expired. Please log in again.");
+                localStorage.removeItem("authToken");
+                window.location.href = "/user/login";
+            });
+        });
+    </script>
+    
+</head>
+<body>
+    <div class="nav-bar">
+        <div class="nav-container">
+            <div class="nav-component">
+                Home
+            </div>
+        </div>
+    </div>
+    <div class="card-container">
+        Welcome !!
+    </div>
+</body>
+</html>

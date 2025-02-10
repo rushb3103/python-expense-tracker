@@ -6,6 +6,13 @@
     <title>Login</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Check if token exists in local storage and redirect
+            const token = localStorage.getItem("authToken");
+            if (token) {
+                window.location.href = "/user/home";
+            }
+        });
        function validateLogin(event) {
             event.preventDefault(); // Prevent form from submitting normally
             
@@ -26,7 +33,8 @@
             .then(data => {
                 console.log(data)
                 if (data.status_code == 1) {
-                    window.location.href = "/"; // Redirect on success
+                    localStorage.setItem("authToken", data.data.token);
+                    window.location.href = "/user/home"; // Redirect on success
                 } else {
                     // alert("Login failed! Please check your credentials.");
                     alert(data.status_message)
