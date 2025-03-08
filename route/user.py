@@ -42,11 +42,21 @@ def post_home(user_id=0):
     print(user_id)
     if request.method == 'GET':
         return render_template('/user/home.html')
-        return user_controllerObj.home(request, user_id)
+        # return user_controllerObj.home(request, user_id)
         # return 'OK'
     elif request.method == 'POST':
         # print("P")
         return user_controllerObj.home(request, user_id)
+    
+@user_blueprint.route("/dashboard", methods=["GET"])
+@functions.token_required
+def dashboard(user_id=0):
+    print(user_id)
+    if request.method == 'GET':
+        # return render_template('/user/home.html')
+        return user_controllerObj.home(request, user_id)
+        # return 'OK'
+
 
 
 # @user_blueprint.route("/login", methods=["POST"])

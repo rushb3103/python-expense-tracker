@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const token = localStorage.getItem("authToken");
@@ -13,7 +14,7 @@
                 return;
             }
     
-            fetch("http://127.0.0.1:5000/user/home", {  // Ensure correct API URL
+            fetch("http://127.0.0.1:5000/user/dashboard", {  // Ensure correct API URL
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -27,12 +28,15 @@
                 return response.json();
             })
             .then(data => {
+                console.log(data)
                 document.getElementById("welcomeMessage").innerText = data.data.message;
             })
             .catch(error => {
+                console.log("catch")
                 alert("Session expired. Please log in again.");
-                localStorage.removeItem("authToken");
-                window.location.href = "/user/login";
+                // localStorage.removeItem("authToken");
+                // window.location.href = "/user/login";
+                console.log(error.message)
             });
         });
     </script>
@@ -47,7 +51,14 @@
         </div>
     </div>
     <div class="card-container">
-        Welcome !!
+        <div class="card">
+            <div class="card-header">
+                Welcome !!
+            </div>
+            <div class="card-message">
+                <p id="welcomeMessage"></p>
+            </div>
+        </div>
     </div>
 </body>
 </html>
