@@ -3,9 +3,10 @@ from libraries.functions import functions
 
 class transactions_contoller():
 
-    def insert_transaction(self, request):
+    def insert_transaction(self, request, user_id = 0):
 
-        user_id = request.form.get("user_id", 0 , int)
+        print(user_id)
+        # user_id = request.form.get("user_id", 0 , int)
         transaction_type = request.form.get("transaction_type", "", str)
         transaction_sub_type = request.form.get("transaction_sub_type", "", str)
         amount = request.form.get("amount", 0, float)
