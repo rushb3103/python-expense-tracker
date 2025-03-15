@@ -162,9 +162,8 @@
                     Expenses
                 </a>
                 <div class="dropdown-content">
-                    <a href="#">Add</a>
-                    <a href="#">Update</a>
-                    <a href="#">Delete</a>
+                    <a href="{{ url_for('transaction.insert') }}">Add</a>
+                    <a href="{{ url_for('transaction.get_transaction') }}">View / Edit</a>
                 </div>
             </div>
         </div>
@@ -175,8 +174,7 @@
                 </a>
                 <div class="dropdown-content">
                     <a href="{{ url_for('transaction.insert') }}">Add</a>
-                    <a href="#">Update</a>
-                    <a href="#">Delete</a>
+                    <a href="{{ url_for('transaction.get_transaction') }}">View / Edit</a>
                 </div>
             </div>
         </div>

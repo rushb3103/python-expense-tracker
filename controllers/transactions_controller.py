@@ -5,7 +5,7 @@ class transactions_contoller():
 
     def insert_transaction(self, request, user_id = 0):
 
-        print(user_id)
+        # print(user_id)
         # user_id = request.form.get("user_id", 0 , int)
         transaction_type = request.form.get("transaction_type", "", str)
         transaction_sub_type = request.form.get("transaction_sub_type", "", str)
@@ -49,3 +49,8 @@ class transactions_contoller():
         return functionsObj.send_response(
             1, "Transaction Inserted Successfully."
         )
+    
+    def get_transaction(self, user_id):
+        transactionsObj = transactions()
+        transactionsObj.where = f" user_id = {user_id}"
+        return transactionsObj.select(execute_dict=True)
