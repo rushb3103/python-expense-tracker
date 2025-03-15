@@ -26,18 +26,18 @@
                     throw new Error("Token expired or invalid.");
                 }
                 return response.json();
-            })
-            .then(data => {
-                console.log(data)
-                document.getElementById("welcomeMessage").innerText = data.data.message;
-            })
-            .catch(error => {
-                console.log("catch")
-                alert("Session expired. Please log in again.");
-                // localStorage.removeItem("authToken");
-                // window.location.href = "/user/login";
-                console.log(error.message)
             });
+            // .then(data => {
+            //     console.log(data)
+            //     document.getElementById("welcomeMessage").innerText = data.data.message;
+            // })
+            // .catch(error => {
+            //     console.log("catch")
+            //     alert("Session expired. Please log in again.");
+            //     // localStorage.removeItem("authToken");
+            //     window.location.href = "/user/login";
+            //     console.log(error.message)
+            // });
         });
     </script>
     

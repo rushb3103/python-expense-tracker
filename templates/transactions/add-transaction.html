@@ -12,38 +12,48 @@
                 window.location.href = "/user/login"; // Redirect if no token
                 return;
             }
-        });
-    </script>
-    <script>
-        document.getElementById("transactionForm").addEventListener("submit", function(event) {
-            event.preventDefault();
-
-            const formData = new FormData(this);
-            const token = localStorage.getItem("authToken");
-
-            fetch("/transaction/insert", { 
-                method: "POST",
-                body: formData,
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert("Transaction added successfully!");
-                    document.getElementById("transactionForm").reset();
-                } else {
-                    alert("Error: " + data.message);
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("Failed to add transaction.");
+    
+            document.getElementById("transactionForm").addEventListener("submit", function(event) {
+                event.preventDefault();
+    
+                const formData = new FormData(this);
+                const token = localStorage.getItem("authToken");
+    
+                // Create a plain object to hold form data
+                const formObject = {};
+    
+                // Loop through the FormData and convert it into a plain object
+                formData.forEach((value, key) => {
+                    formObject[key] = value;
+                });
+    
+                // console.log(formObject); // You can see the data here
+                // console.log(formData);
+                // Make the fetch request with JSON data
+                fetch("/transaction/insert", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        // "Content-Type": "application/json" // Specify JSON content
+                    },
+                    body: formData // Convert the object to JSON
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status_code === 1) {
+                        alert("Transaction added successfully!");
+                        document.getElementById("transactionForm").reset();
+                    } else {
+                        alert("Error: " + data.status_message);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("Failed to add transaction.");
+                });
             });
         });
-    </script>
+    </script>    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -103,15 +113,15 @@
 
     <div class="form-container">
         <h2>Add Transaction</h2>
-        <form id="transactionForm" method="post" action="/transaction/insert">
+        <form id="transactionForm" method="post">
             <!-- <label for="user_id">User ID:</label>
             <input type="number" id="user_id" name="user_id" required> -->
 
             <label for="transaction_type">Transaction Type:</label>
             <select id="transaction_type" name="transaction_type" required>
                 <option value="">Select Type</option>
-                <option value="credit">Credit</option>
-                <option value="debit">Debit</option>
+                <option value="credit">Expense</option>
+                <option value="debit">Income</option>
             </select>
 
             <label for="transaction_sub_type">Transaction Sub-Type:</label>

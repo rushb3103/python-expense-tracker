@@ -12,6 +12,7 @@ functionsObj = functions()
 def insert(user_id=0):
     print(request.method)
     if request.method == "POST":
+        print(request.form)
         return transactions_contollerObj.insert_transaction(request, user_id)
     else:
         return render_template("/transactions/add-transaction.html")

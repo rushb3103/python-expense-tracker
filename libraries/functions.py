@@ -107,7 +107,7 @@ class functions():
             # jwt is passed in the request header
             # if 'x-access-token' in request.headers:
             #     token = request.headers['x-access-token']
-            # print(request.headers)
+            print(request.headers)
             return_data = 0
             if request.method != "GET":
                 if "Authorization" in request.headers:
