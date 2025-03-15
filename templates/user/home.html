@@ -1,81 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const token = localStorage.getItem("authToken");
-    
-            if (!token) {
-                window.location.href = "/user/login"; // Redirect if no token
-                return;
-            }
-    
-            fetch("http://127.0.0.1:5000/user/dashboard", {  // Ensure correct API URL
-                method: "GET",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Token expired or invalid.");
-                }
-                return response.json();
-            });
-            // .then(data => {
-            //     console.log(data)
-            //     document.getElementById("welcomeMessage").innerText = data.data.message;
-            // })
-            // .catch(error => {
-            //     console.log("catch")
-            //     alert("Session expired. Please log in again.");
-            //     // localStorage.removeItem("authToken");
-            //     window.location.href = "/user/login";
-            //     console.log(error.message)
-            // });
-        });
-    </script>
-    
-</head>
-<body>
-    <div class="nav-bar">
-        <div class="nav-container">
-            <div class="nav-component">
-                <a href="#">
-                    Home
-                </a>
-            </div>
-        </div>
-        <div class="nav-container">
-            <div class="nav-component dropdown">
-                <a href="#">
-                    Expenses
-                </a>
-                <div class="dropdown-content">
-                    <a href="#">Add</a>
-                    <a href="#">Update</a>
-                    <a href="#">Delete</a>
-                </div>
-            </div>
-        </div>
-        <div class="nav-container">
-            <div class="nav-component dropdown">
-                <a href="#">
-                    Income
-                </a>
-                <div class="dropdown-content">
-                    <a href="{{ url_for('transaction.insert') }}">Add</a>
-                    <a href="#">Update</a>
-                    <a href="#">Delete</a>
-                </div>
-            </div>
-        </div>
-    </div>
+{% extends "user/base.html" %}
+{% block title %}HOME{% endblock %} 
+{% block body %}
     <div class="card-container">
         <div class="card">
             <div class="card-header">
@@ -86,5 +11,42 @@
             </div>
         </div>
     </div>
-</body>
-</html>
+    </body>
+{% endblock %}
+{% block script %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const token = localStorage.getItem("authToken");
+
+        if (!token) {
+            window.location.href = "/user/login"; // Redirect if no token
+            return;
+        }
+
+        fetch("http://127.0.0.1:5000/user/dashboard", {  // Ensure correct API URL
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Token expired or invalid.");
+            }
+            return response.json();
+        });
+        // .then(data => {
+        //     console.log(data)
+        //     document.getElementById("welcomeMessage").innerText = data.data.message;
+        // })
+        // .catch(error => {
+        //     console.log("catch")
+        //     alert("Session expired. Please log in again.");
+        //     // localStorage.removeItem("authToken");
+        //     window.location.href = "/user/login";
+        //     console.log(error.message)
+        // });
+    });
+</script>
+{% endblock %}

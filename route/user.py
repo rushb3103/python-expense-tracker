@@ -31,7 +31,8 @@ def login():
 def get_home(user_id=0):
     print(user_id)
     if request.method == 'GET':
-        return render_template('/user/home.html')
+        context = {"title" : "HOME"}
+        return render_template('/user/home.html', **context)
         return user_controllerObj.home(request, user_id)
         # return 'OK'
     elif request.method == 'POST':

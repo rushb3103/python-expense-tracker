@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% block title  %} {{ title }} {% endblock %}
+    </title>
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        a{
+            text-decoration: none;
+            color: black;
+        }
+        body {
+            background-color: #f2f2f2;
+            /* display: flex; */
+            justify-content: center;
+            align-items: center;
+            /* height: 100vh; */
+        }
+        .nav-bar {
+            background-color: rgba(250, 241, 119, 0.871);
+            width: 100%;
+            /* height: 55px */
+            padding: 10px;
+            /* margin: 2px; */
+            border: black 2px solid;
+            border-radius: 2px;
+            display: flex;
+            justify-content: end;
+            color: black;
+        }
+        .nav-bar .nav-component{
+            margin: 5px 30px;
+            padding: 5px 11px;
+            border: 2px solid black;
+            border-radius: 10px;
+            max-height: 55px;
+        }
+        .card-container {
+            margin: 20px 20px;
+            padding: 10px 10px;
+            display: flex;
+        }
+        .card-container .card{
+            margin: 15px 37px;
+            padding: 15px 21px;
+            border: 2px solid rgba(0, 0, 0, 0.273);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            /* max-height: 55px; */
+        }
+        .card .card-header{
+            font-weight: bold;
+            font-size: larger;
+            margin: 10px 20px;
+            padding: 5px 10px;
+        }
+        .card .card-message{
+            /* font-weight: bold; */
+            /* font-size: larger; */
+            margin: 10px 15px 10px 30px;
+            padding: 5px 10px;
+        }
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            margin-top: 3px;
+            padding: 2px;
+            display: none;
+            position: absolute;
+            background-color: #ffffff;
+            min-width: 100px;
+            top: 100%; /* Position below the parent */
+            left: 0;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            border: 1px solid black;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 10px;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color:  rgba(147, 250, 119, 0.871);
+        }
+
+        /* Show submenu on hover */
+        .dropdown:hover .dropdown-content {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+        }
+
+
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const token = localStorage.getItem("authToken");
+    
+            if (!token) {
+                window.location.href = "/user/login"; // Redirect if no token
+                return;
+            }
+            // fetch("http://127.0.0.1:5000/user/dashboard", {  // Ensure correct API URL
+            //     method: "GET",
+            //     headers: {
+            //         "Authorization": `Bearer ${token}`,
+            //         "Content-Type": "application/json"
+            //     }
+            // })
+            // .then(response => {
+            //     if (!response.ok) {
+            //         throw new Error("Token expired or invalid.");
+            //     }
+            //     return response.json();
+            // });
+            // .then(data => {
+            //     console.log(data)
+            //     document.getElementById("welcomeMessage").innerText = data.data.message;
+            // })
+            // .catch(error => {
+            //     console.log("catch")
+            //     alert("Session expired. Please log in again.");
+            //     // localStorage.removeItem("authToken");
+            //     window.location.href = "/user/login";
+            //     console.log(error.message)
+            // });
+        });
+    </script>
+    
+</head>
+<body>
+    <div class="nav-bar">
+        <div class="nav-container">
+            <div class="nav-component">
+                <a href="/user/home">
+                    Home
+                </a>
+            </div>
+        </div>
+        <div class="nav-container">
+            <div class="nav-component dropdown">
+                <a href="#">
+                    Expenses
+                </a>
+                <div class="dropdown-content">
+                    <a href="#">Add</a>
+                    <a href="#">Update</a>
+                    <a href="#">Delete</a>
+                </div>
+            </div>
+        </div>
+        <div class="nav-container">
+            <div class="nav-component dropdown">
+                <a href="#">
+                    Income
+                </a>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('transaction.insert') }}">Add</a>
+                    <a href="#">Update</a>
+                    <a href="#">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% block body %} {{ body }} {% endblock %}
+</body>
+{% block script %} {% endblock %}
+</html>

@@ -108,8 +108,9 @@ class functions():
             # if 'x-access-token' in request.headers:
             #     token = request.headers['x-access-token']
             print(request.headers)
+            
             return_data = 0
-            if request.method != "GET":
+            if request.method != "GET" or str(request.url).find("/user/home") != -1:
                 if "Authorization" in request.headers:
                     token = request.headers["Authorization"]
                     token = str(token).split(" ")[-1]
