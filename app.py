@@ -23,5 +23,5 @@ def hello_world():
     return "<p>Hello, I am Rushit !!</p>"
 
 
-if  __name__ ==  '__main__':
-	app.run()
+# if  __name__ ==  '__main__':
+# 	app.run()
