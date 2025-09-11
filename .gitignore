@@ -2,6 +2,9 @@
 __*
 docker-compose.yml
 *.yml
+*.yaml
 /env/*
 /env
 /venv
+/.venv
+.env
