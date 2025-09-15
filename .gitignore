@@ -9,3 +9,8 @@ docker-compose.yml
 /.venv
 .env
 /uploads/*
+.ini
+env.py
+/migrations
+/migrations/*
+test.py

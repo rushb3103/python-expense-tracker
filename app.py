@@ -1,21 +1,13 @@
 
+import traceback
+import os
 
+import pandas as pd
+from flask import render_template, request, redirect, url_for, flash
+from werkzeug.utils import secure_filename
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-from flask import Flask
-
+from models import db, Expense
+from forms import UploadFileForm
 from flask import Flask
 from flask_wtf.csrf import CSRFProtect
 from config import Config
@@ -33,48 +25,40 @@ csrf = CSRFProtect(app)
 def hello_world():
     return "<p>Hello, I am Rushit !!</p>"
 
-import os
-import pdfplumber
-from flask import render_template, request, redirect, url_for, flash
-from werkzeug.utils import secure_filename
 
-from models import db, Expense
-from forms import UploadPDFForm
 
 
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
-    form = UploadPDFForm()
+    form = UploadFileForm()
     if form.validate_on_submit():
-        file = form.pdf_file.data
+        file = form.file.data
         filename = secure_filename(file.filename)
         filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
         file.save(filepath)
+        
+        df = pd.read_csv(filepath, skiprows=22, sep='~', error_bad_lines=False)
+        df.columns = df.columns.str.strip().str.lower().str.replace(' ', '_')
+        df = df[df['transaction_type'].isin(["Domestic", "International"])]
+        
+        for row in df.itertuples():
+            try:
+                expense = Expense(
+                    transaction_date=row.date,
+                    description=row.description,
+                    amount=float(row.amt.replace(",", "")),
+                    transaction_type="Debit" if row._6.strip() == "" else "Credit",
+                    category="Uncategorized",
+                    filepath=filepath
+                )
+                db.session.add(expense)
+            except Exception as e:
+                print(traceback.format_exc())
+                continue
+            
+        db.session.commit()
 
-        # Example PDF parsing (simple text scan)
-        with pdfplumber.open(filepath) as pdf:
-            for page in pdf.pages:
-                text = page.extract_text()
-                if not text:
-                    continue
-                # naive parse: split by lines
-                for line in text.split("\n"):
-                    if "INR" in line:  # crude filter for transactions
-                        parts = line.split()
-                        try:
-                            expense = Expense(
-                                transaction_date=parts[0],
-                                description=" ".join(parts[1:-1]),
-                                amount=float(parts[-1].replace(",", "")),
-                                category="Uncategorized",
-                                pdf_file=filename
-                            )
-                            db.session.add(expense)
-                        except Exception as e:
-                            continue
-            db.session.commit()
-
-        flash("PDF uploaded and parsed successfully!")
+        flash("File uploaded and parsed successfully!")
         return redirect(url_for("upload"))
 
     return render_template("upload.html", form=form)
