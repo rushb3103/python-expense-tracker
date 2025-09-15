@@ -64,8 +64,8 @@ def upload():
     return render_template("upload.html", form=form)
 
 
-if  __name__ ==  '__main__':
-    from models import db
-    with app.app_context():
-        db.create_all()
-    app.run()
+# if  __name__ ==  '__main__':
+#     from models import db
+#     with app.app_context():
+#         db.create_all()
+#     app.run()
