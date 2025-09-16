@@ -71,6 +71,12 @@ def upload():
 
     return render_template("upload.html", form=form)
 
+@app.route("/debug")
+def debug():
+    import os
+    return str({k: os.environ[k] for k in ("SCRIPT_NAME","PATH_INFO","REQUEST_URI") if k in os.environ})
+
+
 
 # if  __name__ ==  '__main__':
 #     from models import db
