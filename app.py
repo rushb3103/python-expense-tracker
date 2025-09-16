@@ -20,6 +20,14 @@ app.config.from_object(Config)
 db.init_app(app)
 csrf = CSRFProtect(app)
 
+import logging
+
+logging.basicConfig(
+    filename="./flask.log",
+    level=logging.DEBUG,
+    format="%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]",
+)
+
 
 @app.route("/")
 def hello_world():
