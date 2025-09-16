@@ -27,7 +27,8 @@ logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]",
 )
-
+app.logger.addHandler(logging.FileHandler("./flask.log"))
+app.logger.setLevel(logging.DEBUG)
 
 @app.route("/")
 def hello_world():
@@ -74,8 +75,13 @@ def upload():
 @app.route("/debug")
 def debug():
     import os
+    app.logger.info("Debug route hit!")
     return str({k: os.environ[k] for k in ("SCRIPT_NAME","PATH_INFO","REQUEST_URI") if k in os.environ})
 
+@app.errorhandler(Exception)
+def handle_exception(e):
+    app.logger.exception("Unhandled Exception: %s", e)
+    return "Internal Server Error – check logs", 500
 
 
 # if  __name__ ==  '__main__':
