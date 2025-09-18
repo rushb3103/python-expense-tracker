@@ -75,7 +75,7 @@ def upload():
             except Exception:
                 db.session.rollback()
                 print(traceback.format_exc(), file=sys.stderr)
-                return {"error": "DB commit failed"}, 500
+                return {"error": "DB commit failed", "trace": traceback.format_exc()}, 500
             flash("File uploaded and parsed successfully!")
             return redirect(url_for("upload"))
 
