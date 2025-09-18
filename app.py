@@ -88,10 +88,10 @@ def debug():
     app.logger.info("Debug route hit!")
     return str({k: os.environ[k] for k in ("SCRIPT_NAME","PATH_INFO","REQUEST_URI") if k in os.environ})
 
-@app.errorhandler(Exception)
-def handle_exception(e):
-    app.logger.exception("Unhandled Exception: %s", e)
-    return "Internal Server Error – check logs", 500
+# @app.errorhandler(Exception)
+# def handle_exception(e):
+#     # app.logger.exception("Unhandled Exception: %s", e)
+#     return "Internal Server Error – check logs", 500
 
 
 # if  __name__ ==  '__main__':
