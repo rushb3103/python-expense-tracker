@@ -51,6 +51,8 @@ def upload():
             df.columns = df.columns.str.strip().str.lower().str.replace(' ', '_')
             df = df[df['transaction_type'].isin(["Domestic", "International"])]
             
+            return {"message": "File processed", "rows": len(df)}
+            
             for row in df.itertuples():
                 # try:
                 expense = Expense(
