@@ -84,7 +84,7 @@ def upload():
                 print(traceback.format_exc(), file=sys.stderr)
                 return {"error": "DB commit failed", "trace": traceback.format_exc()}, 500
             flash("File uploaded and parsed successfully!")
-            return redirect(url_for("upload"))
+            return redirect("/upload")
 
         return render_template("upload.html", form=form)
     except Exception as e:
