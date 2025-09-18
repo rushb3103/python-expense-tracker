@@ -14,6 +14,8 @@ from flask_wtf.csrf import CSRFProtect
 from config import Config
 from models import db
 
+
+
 app = Flask(__name__)
 app.config.from_object(Config)
 
@@ -22,6 +24,11 @@ db.init_app(app)
 csrf = CSRFProtect(app)
 
 import logging
+import os
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
+os.environ["NUMEXPR_NUM_THREADS"] = "1"
 
 logging.basicConfig(
     filename="./flask.log",
