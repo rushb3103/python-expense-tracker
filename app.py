@@ -52,19 +52,19 @@ def upload():
             df = df[df['transaction_type'].isin(["Domestic", "International"])]
             
             for row in df.itertuples():
-                try:
-                    expense = Expense(
-                        transaction_date=row.date,
-                        description=row.description,
-                        amount=float(row.amt.replace(",", "")),
-                        transaction_type="Debit" if row._6.strip() == "" else "Credit",
-                        category="Uncategorized",
-                        filepath=filepath
-                    )
-                    db.session.add(expense)
-                except Exception as e:
-                    print(traceback.format_exc())
-                    continue
+                # try:
+                expense = Expense(
+                    transaction_date=row.date,
+                    description=row.description,
+                    amount=float(row.amt.replace(",", "")),
+                    transaction_type="Debit" if row._6.strip() == "" else "Credit",
+                    category="Uncategorized",
+                    filepath=filepath
+                )
+                db.session.add(expense)
+                # except Exception as e:
+                #     print(traceback.format_exc())
+                #     continue
                 
             db.session.commit()
 
