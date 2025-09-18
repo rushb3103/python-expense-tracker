@@ -39,38 +39,46 @@ def hello_world():
 
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
-    form = UploadFileForm()
-    if form.validate_on_submit():
-        file = form.file.data
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
-        file.save(filepath)
-        
-        df = pd.read_csv(filepath, skiprows=22, sep='~', error_bad_lines=False)
-        df.columns = df.columns.str.strip().str.lower().str.replace(' ', '_')
-        df = df[df['transaction_type'].isin(["Domestic", "International"])]
-        
-        for row in df.itertuples():
-            try:
-                expense = Expense(
-                    transaction_date=row.date,
-                    description=row.description,
-                    amount=float(row.amt.replace(",", "")),
-                    transaction_type="Debit" if row._6.strip() == "" else "Credit",
-                    category="Uncategorized",
-                    filepath=filepath
-                )
-                db.session.add(expense)
-            except Exception as e:
-                print(traceback.format_exc())
-                continue
+    try:
+        form = UploadFileForm()
+        if form.validate_on_submit():
+            file = form.file.data
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+            file.save(filepath)
             
-        db.session.commit()
+            df = pd.read_csv(filepath, skiprows=22, sep='~', error_bad_lines=False)
+            df.columns = df.columns.str.strip().str.lower().str.replace(' ', '_')
+            df = df[df['transaction_type'].isin(["Domestic", "International"])]
+            
+            for row in df.itertuples():
+                try:
+                    expense = Expense(
+                        transaction_date=row.date,
+                        description=row.description,
+                        amount=float(row.amt.replace(",", "")),
+                        transaction_type="Debit" if row._6.strip() == "" else "Credit",
+                        category="Uncategorized",
+                        filepath=filepath
+                    )
+                    db.session.add(expense)
+                except Exception as e:
+                    print(traceback.format_exc())
+                    continue
+                
+            db.session.commit()
 
-        flash("File uploaded and parsed successfully!")
-        return redirect(url_for("upload"))
+            flash("File uploaded and parsed successfully!")
+            return redirect(url_for("upload"))
 
-    return render_template("upload.html", form=form)
+        return render_template("upload.html", form=form)
+    except Exception as e:
+        error = traceback.format_exc()
+        print(error)
+        app.logger.exception("Error in upload route: %s", e)
+        flash("An error occurred while processing the file.")
+        return {"error": error}, 500
+        # return redirect(url_for("upload"))
 
 @app.route("/debug")
 def debug():
