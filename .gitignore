@@ -9,7 +9,7 @@ docker-compose.yml
 /.venv
 .env
 /uploads/*
-.ini
+*.ini
 env.py
 /migrations
 /migrations/*
