@@ -1,6 +1,7 @@
 import os
 
 class Config:
+    APPLICATION_ROOT = '/'
     SECRET_KEY = "fgh/35t#%2grt"
     SQLALCHEMY_DATABASE_URI = "mysql+pymysql://expensetracker_policeman:e2ff141ef5f5771ddda38f3fd762709e9334e510@q0rsi6.h.filess.io:3307/expensetracker_policeman"
     SQLALCHEMY_DATABASE_URI = "mysql+pymysql://rushnb10_rushit:Rushit2002@localhost/rushnb10_expensedb"
