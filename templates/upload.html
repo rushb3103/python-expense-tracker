@@ -1,23 +1,105 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Upload File</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
+
 <body>
-  <h2>Upload Credit Card Statement</h2>
-  <form method="POST" enctype="multipart/form-data">
-    {{ form.hidden_tag() }}
-    {{ form.file.label }} {{ form.file() }} <br><br>
-    {{ form.submit() }}
+  <h2 class="text-center mt-5 mb-2 p-2">Upload Credit Card Statement</h2>
+  <form method="POST" enctype="multipart/form-data" class="container mt-5" style="max-width: 600px;" id="uploadForm">
+    <div class="mb-3">
+      {{ form.hidden_tag() }}
+      {{ form.file.label(class="form-label") }}
+      {{ form.file(class="form-control form-control-lg") }} <br><br>
+      {{ form.submit(class="btn btn-outline-success") }}
+    </div>
   </form>
   {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      <ul>
-        {% for msg in messages %}
-          <li>{{ msg }}</li>
-        {% endfor %}
-      </ul>
-    {% endif %}
+  {% if messages %}
+  <ul>
+    {% for msg in messages %}
+    <li>{{ msg }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
   {% endwith %}
+
+
+  <!-- <div id="charts" class="container mt-5" style="display:none;">
+    <h3 class="text-center mb-4">Expense Analysis</h3>
+    <div class="row">
+      <div class="col-md-6 mb-4">
+        <canvas id="dailyTrendChart"></canvas>
+      </div>
+      <div class="col-md-6 mb-4">
+        <canvas id="categoryChart"></canvas>
+      </div>
+      <div class="col-md-6 mb-4">
+        <canvas id="debitCreditChart"></canvas>
+      </div>
+    </div>
+  </div> -->
+
+<div id="charts" style="display:none;">
+  <canvas id="dailyTrend" width="400" height="200"></canvas>
+  <canvas id="categoryBreakdown" width="400" height="200"></canvas>
+  <canvas id="debitCredit" width="400" height="200"></canvas>
+</div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+     document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      let formData = new FormData(e.target);
+
+      let res = await fetch("/upload", {
+        method: "POST",
+        body: formData,
+        headers: { "X-Requested-With": "XMLHttpRequest" }
+      });
+
+      let result = await res.json();
+      console.log("Upload response:", result); // debug
+      let transactions = result.transactions || [];
+
+      if (!transactions.length) {
+        alert("No transactions found");
+        return;
+      }
+
+      document.getElementById("charts").style.display = "block";
+
+      // --- Daily trend ---
+      let byDate = {};
+      transactions.filter(t => t.transaction_type === "Debit").forEach(t => {
+        byDate[t.transaction_date] = (byDate[t.transaction_date] || 0) + t.amount;
+      });
+
+      new Chart(document.getElementById("dailyTrend"), {
+        type: "line",
+        data: {
+          labels: Object.keys(byDate),
+          datasets: [{
+            label: "Daily Spending",
+            data: Object.values(byDate),
+            borderColor: "blue"
+          }]
+        }
+      });
+    });
+
+    </script>
+
 </body>
+
 </html>

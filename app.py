@@ -4,7 +4,7 @@ import traceback
 import os
 
 import pandas as pd
-from flask import render_template, request, redirect, url_for, flash
+from flask import jsonify, render_template, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 
 from models import db, Expense
@@ -60,18 +60,28 @@ def upload():
             df = df[df['transaction_type'].isin(["Domestic", "International"])]
             
             # return {"message": "File processed", "rows": len(df)}
+            transaction_list = []
             
             for row in df.itertuples():
+                transaction_json = {
+                    "date": pd.to_datetime(row.date, errors="coerce"),
+                    "description": str(row.description),
+                    "amount": float(str(row.amt).replace(",", "")),
+                    "transaction_type": "Debit" if getattr(row, "_6", "").strip() == "" else "Credit",
+                    "category": "Uncategorized",
+                    "filepath": filepath
+                }
                 try:
                     expense = Expense(
-                        transaction_date=pd.to_datetime(row.date, errors="coerce"),
-                        description=str(row.description),
-                        amount=float(str(row.amt).replace(",", "")),
-                        transaction_type="Debit" if getattr(row, "_6", "").strip() == "" else "Credit",
-                        category="Uncategorized",
-                        filepath=filepath
+                        transaction_date=transaction_json["date"],
+                        description=transaction_json["description"],
+                        amount=transaction_json["amount"],
+                        transaction_type=transaction_json["transaction_type"],
+                        category=transaction_json["category"],
+                        filepath=transaction_json["filepath"]
                     )
                     db.session.add(expense)
+                    transaction_list.append(transaction_json)
                 except Exception:
                     print("Row failed:", row, file=sys.stderr)
                     print(traceback.format_exc(), file=sys.stderr)
@@ -83,6 +93,16 @@ def upload():
                 db.session.rollback()
                 print(traceback.format_exc(), file=sys.stderr)
                 return {"error": "DB commit failed", "trace": traceback.format_exc()}, 500
+            
+                        # ✅ If AJAX upload, return JSON for charts
+            if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+                return jsonify({
+                    "status": "success",
+                    "rows": len(transaction_list),
+                    "transactions": transaction_list
+                })
+    
+        
             flash("File uploaded and parsed successfully!")
             return redirect("/upload")
 
@@ -107,8 +127,8 @@ def debug():
 #     return "Internal Server Error – check logs", 500
 
 
-# if  __name__ ==  '__main__':
-#     from models import db
-#     with app.app_context():
-#         db.create_all()
-#     app.run()
+if  __name__ ==  '__main__':
+    from models import db
+    with app.app_context():
+        db.create_all()
+    app.run(debug=True)
