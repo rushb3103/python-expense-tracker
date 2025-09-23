@@ -45,15 +45,49 @@
     </div>
   </div> -->
 
-  <div>
-    <h3>Spending by Category</h3>
-    <canvas id="categoryChart" width="400" height="200"></canvas>
+  <div class="container charts-container" id="charts" style="display:none;">
+    <div class="container mt-5 chart-card" id="categoryChartContainer">
+      <h3>Spending by Category</h3>
+      <canvas id="categoryChart"></canvas>
+    </div>
+
+    <div class="container mt-5 chart-card" id="dailyChartContainer">
+      <h3>Daily Spending Trend</h3>
+      <canvas id="dailyChart"></canvas>
+    </div>    
   </div>
 
-  <div>
-    <h3>Daily Spending Trend</h3>
-    <canvas id="dailyChart" width="400" height="200"></canvas>
-  </div>
+
+  <style>
+  .charts-container {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    padding: 20px;
+  }
+
+  .chart-card {
+    flex: 1 1 500px;
+    max-width: 700px;
+    border: 1px solid black;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    text-align: center;
+  }
+
+  .chart-card h3 {
+    margin-bottom: 20px;
+    font-family: "Segoe UI", sans-serif;
+    font-weight: 600;
+    color: #333;
+  }
+
+  canvas {
+    width: 100% !important;
+    height: 400px !important;
+  }
+</style>
 
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
@@ -83,6 +117,8 @@
     // Render spending by category (Pie)
     function renderCategoryChart(transactions) {
       const ctx = document.getElementById("categoryChart").getContext("2d");
+      charts = document.getElementById("charts");
+      charts.style.display = "flex";
 
       // Aggregate totals by transaction_type
       const totals = transactions.reduce((acc, tx) => {
@@ -114,6 +150,8 @@
     // Render daily spending trend (Line)
     function renderDailyChart(transactions) {
       const dailyTotals = {};
+      charts = document.getElementById("charts");
+      charts.style.display = "flex";
 
       transactions.forEach(tx => {
         if (tx.transaction_type === "Debit") {
