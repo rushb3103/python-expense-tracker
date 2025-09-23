@@ -42,7 +42,22 @@ app.logger.setLevel(logging.DEBUG)
 def hello_world():
     return "<p>Hello, I am Rushit !!</p>"
 
-
+def detect_subcategory(description: str) -> str:
+    desc = description.lower()
+    if "electricity" in desc or "power" in desc or "bill" in desc:
+        return "Electricity"
+    elif "amazon" in desc or "flipkart" in desc or "shopping" in desc:
+        return "Shopping"
+    elif "swiggy" in desc or "zomato" in desc or "restaurant" in desc or "blinkit" in desc:
+        return "Food"
+    elif "petrol" in desc or "fuel" in desc or "hpcl" in desc:
+        return "Fuel"
+    elif "flight" in desc or "train" in desc or "uber" in desc or "ola" in desc:
+        return "Travel"
+    elif "gyftr" in desc or "gift" in desc or "voucher" in desc:
+        return "Gift Cards"
+    else:
+        return "Other"
 
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
@@ -73,6 +88,7 @@ def upload():
                 "transaction_type": "Debit" if getattr(row, "_6", "").strip() == "" else "Credit",
                 "category": "Uncategorized",
                 "filepath": filepath,
+                "subcategory": detect_subcategory(str(row.description))
             }
             transactions.append(tx)
 
