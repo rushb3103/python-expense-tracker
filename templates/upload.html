@@ -45,60 +45,111 @@
     </div>
   </div> -->
 
-<div id="charts" style="display:none;">
-  <canvas id="dailyTrend" width="400" height="200"></canvas>
-  <canvas id="categoryBreakdown" width="400" height="200"></canvas>
-  <canvas id="debitCredit" width="400" height="200"></canvas>
-</div>
+  <div>
+    <h3>Spending by Category</h3>
+    <canvas id="categoryChart" width="400" height="200"></canvas>
+  </div>
+
+  <div>
+    <h3>Daily Spending Trend</h3>
+    <canvas id="dailyChart" width="400" height="200"></canvas>
+  </div>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-      crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-     document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Upload form handler
+    document.getElementById("uploadForm").addEventListener("submit", async function (e) {
       e.preventDefault();
-      let formData = new FormData(e.target);
+      const formData = new FormData(this);
 
-      let res = await fetch("/upload", {
+      const res = await fetch("{{ url_for('upload') }}", {
         method: "POST",
-        body: formData,
-        headers: { "X-Requested-With": "XMLHttpRequest" }
+        body: formData
       });
+      const data = await res.json();
+      console.log("Upload response:", data);
 
-      let result = await res.json();
-      console.log("Upload response:", result); // debug
-      let transactions = result.transactions || [];
+      if (data.status === "success") {
+        renderCategoryChart(data.transactions);
+        renderDailyChart(data.transactions);
+      }
+    });
 
-      if (!transactions.length) {
-        alert("No transactions found");
-        return;
+    // Render spending by category (Pie)
+    function renderCategoryChart(transactions) {
+      const ctx = document.getElementById("categoryChart").getContext("2d");
+
+      // Aggregate totals by transaction_type
+      const totals = transactions.reduce((acc, tx) => {
+        acc[tx.transaction_type] = (acc[tx.transaction_type] || 0) + tx.amount;
+        return acc;
+      }, {});
+
+      const labels = Object.keys(totals);
+      const values = Object.values(totals);
+
+      // 🛠 Prevent error: check if chart exists and has destroy()
+      if (window.categoryChart && typeof window.categoryChart.destroy === "function") {
+        window.categoryChart.destroy();
       }
 
-      document.getElementById("charts").style.display = "block";
-
-      // --- Daily trend ---
-      let byDate = {};
-      transactions.filter(t => t.transaction_type === "Debit").forEach(t => {
-        byDate[t.transaction_date] = (byDate[t.transaction_date] || 0) + t.amount;
-      });
-
-      new Chart(document.getElementById("dailyTrend"), {
-        type: "line",
+      window.categoryChart = new Chart(ctx, {
+        type: "pie",
         data: {
-          labels: Object.keys(byDate),
+          labels: labels,
           datasets: [{
-            label: "Daily Spending",
-            data: Object.values(byDate),
-            borderColor: "blue"
+            label: "Expenses by Type",
+            data: values,
+            backgroundColor: ["#f87171", "#34d399"], // red, green
           }]
         }
       });
-    });
+    }
 
-    </script>
+    // Render daily spending trend (Line)
+    function renderDailyChart(transactions) {
+      const dailyTotals = {};
+
+      transactions.forEach(tx => {
+        if (tx.transaction_type === "Debit") {
+          const d = new Date(tx.date);
+          const day = d.toISOString().slice(0, 10); // YYYY-MM-DD
+          const amt = parseFloat(tx.amount) || 0;
+          dailyTotals[day] = (dailyTotals[day] || 0) + amt;
+        }
+      });
+
+      const labels = Object.keys(dailyTotals).sort();
+      const values = labels.map(l => dailyTotals[l]);
+
+      const ctx = document.getElementById("dailyChart").getContext("2d");
+      if (window.dailyChart && typeof window.dailyChart.destroy === "function") {
+        window.dailyChart.destroy();
+      }
+
+      console.log("Daily Chart Data:", { labels, values });
+
+      window.dailyChart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: labels,
+          datasets: [{
+            label: "Daily Spending",
+            data: values,
+            fill: false,
+            borderColor: "blue",
+            tension: 0.1
+          }]
+        }
+      });
+    }
+
+  </script>
 
 </body>
 
