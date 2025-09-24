@@ -48,6 +48,10 @@ def detect_subcategory(description: str) -> str:
         return "Electricity"
     elif "amazon" in desc or "flipkart" in desc or "shopping" in desc:
         return "Shopping"
+    elif "netflix" in desc or "spotify" in desc or "prime" in desc or "hotstar" in desc:
+        return "Streaming"
+    elif "fortnite" in desc or "pubg" in desc or "games" in desc:
+        return "Gaming"
     elif "swiggy" in desc or "zomato" in desc or "restaurant" in desc or "blinkit" in desc:
         return "Food"
     elif "petrol" in desc or "fuel" in desc or "hpcl" in desc:
@@ -102,6 +106,7 @@ def upload():
                 filepath=tx["filepath"]
             )
             db.session.add(expense)
+            tx.pop("filepath")  # Remove filepath from response
 
         db.session.commit()
 

@@ -54,40 +54,44 @@
     <div class="container mt-5 chart-card" id="dailyChartContainer">
       <h3>Daily Spending Trend</h3>
       <canvas id="dailyChart"></canvas>
-    </div>    
+    </div>
+    <div class="container mt-5 chart-card" id="dailyChartContainer">
+      <h3>Spending by Sub Category</h3>
+      <canvas id="subcategoryChart"></canvas>
+    </div>
   </div>
 
 
   <style>
-  .charts-container {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 30px;
-    padding: 20px;
-  }
+    .charts-container {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      padding: 20px;
+    }
 
-  .chart-card {
-    flex: 1 1 500px;
-    max-width: 700px;
-    border: 1px solid black;
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    text-align: center;
-  }
+    .chart-card {
+      flex: 1 1 500px;
+      max-width: 700px;
+      border: 1px solid black;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
 
-  .chart-card h3 {
-    margin-bottom: 20px;
-    font-family: "Segoe UI", sans-serif;
-    font-weight: 600;
-    color: #333;
-  }
+    .chart-card h3 {
+      margin-bottom: 20px;
+      font-family: "Segoe UI", sans-serif;
+      font-weight: 600;
+      color: #333;
+    }
 
-  canvas {
-    width: 100% !important;
-    height: 400px !important;
-  }
-</style>
+    canvas {
+      width: 100% !important;
+      height: 400px !important;
+    }
+  </style>
 
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
@@ -111,6 +115,7 @@
       if (data.status === "success") {
         renderCategoryChart(data.transactions);
         renderDailyChart(data.transactions);
+        renderSubcategoryChart(data.transactions);
       }
     });
 
@@ -143,6 +148,27 @@
             data: values,
             backgroundColor: ["#f87171", "#34d399"], // red, green
           }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,  // allows flexible scaling
+          devicePixelRatio: 2,
+          plugins: {
+            tooltip: {
+              enabled: true,
+              mode: "nearest",
+              intersect: false,
+              callbacks: {
+                label: ctx => `₹${ctx.raw.toLocaleString()}`
+              },
+              legend: { display: false },
+              title: { display: true, text: "Spending by Category" }
+            },
+            interaction: {
+              mode: "index",
+              intersect: false
+            }
+          }
         }
       });
     }
@@ -183,9 +209,103 @@
             borderColor: "blue",
             tension: 0.1
           }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,  // allows flexible scaling
+          devicePixelRatio: 2,
+          plugins: {
+            tooltip: {
+              enabled: true,
+              mode: "nearest",
+              intersect: false,
+              callbacks: {
+                label: ctx => `₹${ctx.raw.toLocaleString()}`
+              },
+              legend: { display: false },
+              title: { display: true, text: "Daily Spending Trend" }
+            },
+            interaction: {
+              mode: "index",
+              intersect: false
+            },
+            scales: {
+              y: { beginAtZero: true }
+            }
+          }
         }
       });
     }
+    function renderSubcategoryChart(transactions) {
+      const grouped = {};
+      console.log("Rendering Subcategory Chart with transactions:", transactions);
+      transactions.forEach(t => {
+        if (t.transaction_type === "Debit") {
+          grouped[t.subcategory] = (grouped[t.subcategory] || 0) + t.amount;
+        }
+      });
+
+      const ctx = document.getElementById("subcategoryChart").getContext("2d");
+      if (window.subcategoryChart && typeof window.subcategoryChart.destroy === "function") {
+        window.subcategoryChart.destroy();
+      }
+
+      console.log("Subcategory Chart Data:", grouped);
+      window.subcategoryChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: Object.keys(grouped),
+          datasets: [{
+            label: "Spending by Subcategory",
+            data: Object.values(grouped),
+            backgroundColor: [
+              "#4cafef", "#ff9800", "#f44336", "#9c27b0", "#009688", "#795548"
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,  // allows flexible scaling
+          devicePixelRatio: 2,
+          plugins: {
+            tooltip: {
+              enabled: true,
+              mode: "nearest",
+              intersect: false,
+              callbacks: {
+                label: ctx => `₹${ctx.raw.toLocaleString()}`
+              },
+              title: { display: true, text: "Subcategory Breakdown" }
+            },
+            legend: {
+              display: true,
+              position: "top",
+              labels: {
+              generateLabels: function(chart) {
+                // Show all subcategories with their values in legend
+                const data = chart.data;
+                return data.labels.map((label, i) => ({
+                text: `${label}: ₹${data.datasets[0].data[i].toLocaleString()}`,
+                fillStyle: data.datasets[0].backgroundColor[i % data.datasets[0].backgroundColor.length],
+                strokeStyle: data.datasets[0].backgroundColor[i % data.datasets[0].backgroundColor.length],
+                index: i
+                }));
+              }
+              }
+            }
+            },
+            interaction: {
+              mode: "index",
+              intersect: false
+            },
+            scales: {
+              y: { beginAtZero: true }
+            }
+          }
+        }
+      );
+    }
+    
 
   </script>
 
