@@ -85,8 +85,9 @@ def upload():
 
         transactions = []
         for row in df.itertuples():
+            parsed_date = str(row.date).split(' ')[0]
             tx = {
-                "date": pd.to_datetime(row.date, errors="coerce").strftime("%Y-%m-%d %H:%M:%S"),
+                "date": pd.to_datetime(parsed_date, errors="coerce", format="%d/%m/%Y").strftime("%Y-%m-%d %H:%M:%S"),
                 "description": str(row.description),
                 "amount": float(str(row.amt).replace(",", "")),
                 "transaction_type": "Debit" if getattr(row, "_6", "").strip() == "" else "Credit",
