@@ -28,8 +28,8 @@ CORS(app)
 def hello_world():
     return "<p>Hello, I am Rushit !!</p>"
 
-app.register_blueprint(user_blueprint, url_prefix='/user')
-app.register_blueprint(transaction_blueprint, url_prefix="/transaction")
+# app.register_blueprint(user_blueprint, url_prefix='/user')
+# app.register_blueprint(transaction_blueprint, url_prefix="/transaction")
 
 if  __name__ ==  '__main__':
     app.run(debug=True)
